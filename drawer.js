@@ -26,19 +26,20 @@ class Polygon {
     }
 }
 
-let polygons = [new Polygon([new Point3D(500, 200, 10), new Point3D(550, 200, 10), new Point3D(550, 100, 10), new Point3D(500, 100, 10)]),
-                new Polygon([new Point3D(20, 20, 10), new Point3D(20, 20, 20), new Point3D(20, 10, 20), new Point3D(20, 10, 10)])];
-let distance = 10;
+let polygons = [new Polygon([new Point3D(10, 10, 10), new Point3D(20, 10, 10), new Point3D(20, 20, 10), new Point3D(10, 20, 10)]),
+new Polygon([new Point3D(-20, 20, 10), new Point3D(-20, 20, 20), new Point3D(-20, 10, 20), new Point3D(-20, 10, 10)])];
+let distance = 100;
+let translated = false;
 
 document.addEventListener('keydown', (event) => {
     const keyName = event.key;
 
     if (keyName === '+' || keyName === '=') {// dla wygody gdy nie ma klawiatury numerycznej
-        distance = distance + 1;
+        distance = distance + 10;
     }
 
     if (keyName === '-') {
-        distance = distance - 1;
+        distance = distance - 10;
     }
     draw();
 });
@@ -48,8 +49,12 @@ function draw() {
     const canvas = document.getElementById('canvas');
     if (canvas.getContext) {
         const context = canvas.getContext('2d');
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
+        if (!translated) {
+            context.translate(canvas.width / 2, canvas.height / 2);
+            translated = true;
+        }
+        context.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
+        console.log(distance);
         /*context.fillStyle = 'rgb(200, 0, 0)';
         context.fillRect(rects[0].szerokosc, rects[0].szerokosc, rects[0].szerokosc, rects[0].wysokosc);
         context.fillStyle = 'rgb(0, 0, 200)';
@@ -64,7 +69,7 @@ function draw() {
             });
             console.log(points);
             drawPolygon(context, points);
-        });      
+        });
     }
 }
 
@@ -79,10 +84,6 @@ function drawPolygon(context, points) {
 }
 
 function point3Dto2D(point3D) {
-    console.log(point3D)
-    console.log(point3D.x)
-    console.log(point3D.y)
-    console.log(point3D.z)
     if (point3D.z < 0) {
         z = 0.000001
     }
@@ -90,4 +91,3 @@ function point3Dto2D(point3D) {
     y = point3D.y * (distance / point3D.z)
     return new Point2D(x, y)
 }
-    
