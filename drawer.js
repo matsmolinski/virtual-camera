@@ -26,20 +26,136 @@ class Polygon {
     }
 }
 
-let polygons = [new Polygon([new Point3D(10, 10, 10), new Point3D(20, 10, 10), new Point3D(20, 20, 10), new Point3D(10, 20, 10)]),
-new Polygon([new Point3D(-20, 20, 10), new Point3D(-20, 20, 20), new Point3D(-20, 10, 20), new Point3D(-20, 10, 10)])];
-let distance = 100;
+class Camera {
+    constructor() {
+        this.polygons = [new Polygon([new Point3D(10, 10, 10), new Point3D(20, 10, 10), new Point3D(20, 20, 10), new Point3D(10, 20, 10)]),
+            new Polygon([new Point3D(-20, 20, 10), new Point3D(-20, 20, 20), new Point3D(-20, 10, 20), new Point3D(-20, 10, 10)])];
+        this.distance = 100;
+    }
+
+    move(x, y, z) {
+        let matrix = [
+            [1, 0, 0, x],
+            [0, 1, 0, y],
+            [0, 0, 1, z],
+            [0, 0, 0, 1]]
+        this.multiply(matrix);
+    }
+
+    rotateOX(direction) {
+        const angle = direction * Math.PI / 60
+        let matrix = [
+            [1, 0, 0, 0],
+            [0, Math.cos(angle), -1 * Math.sin(angle), 0],
+            [0, Math.sin(angle), Math.cos(angle), 0],
+            [0, 0, 0, 1]];
+        this.multiply(matrix);
+    }
+
+    rotateOY(direction) {
+        const angle = direction * Math.PI / 60
+        let matrix = [
+            [Math.cos(angle), 0, Math.sin(angle), 0],
+            [0, 1, 0, 0],
+            [-1 * Math.sin(angle), 0, Math.cos(angle), 0],
+            [0, 0, 0, 1]];
+        this.multiply(matrix);
+    }
+
+    rotateOZ(direction) {
+        const angle = direction * Math.PI / 60
+        let matrix = [
+            [Math.cos(angle), -1 * Math.sin(angle), 0, 0],
+            [Math.sin(angle), Math.cos(angle), 0, 0],
+            [0, 0, 1, 0],
+            [0, 0, 0, 1]];
+        this.multiply(matrix);
+    }
+
+    multiply(matrix) {
+        let newPolygons = [];
+        this.polygons.forEach((polygon) => {
+            let newPoints = [];
+            polygon.points.forEach((point) => {
+                const pointVec = [point.x, point.y, point.z, 1];
+                let newPoint = math.multiply(matrix, pointVec);
+                console.log(newPoint);
+                newPoints.push(new Point3D(newPoint[0], newPoint[1], newPoint[2]));
+            });
+            newPolygons.push(new Polygon(newPoints));
+        });
+        console.log(this.polygons);
+        console.log(newPolygons);
+        this.polygons = newPolygons;
+    }
+
+}
+
+
+let camera = new Camera();
 let translated = false;
 
 document.addEventListener('keydown', (event) => {
     const keyName = event.key;
 
-    if (keyName === '+' || keyName === '=') {// dla wygody gdy nie ma klawiatury numerycznej
-        distance = distance + 10;
+    if (keyName === '+' || keyName === '=') {
+        camera.distance = camera.distance + 10;
     }
 
-    if (keyName === '-') {
-        distance = distance - 10;
+    if (keyName === '-' && camera.distance - 10 > 0) {
+        camera.distance = camera.distance - 10;
+    }
+
+
+
+    if (keyName === 'ArrowUp') {
+        camera.move(0, 0, -1);
+    }
+
+    if (keyName === 'ArrowDown') {
+        camera.move(0, 0, 1);
+    }
+
+    if (keyName === 'ArrowLeft') {
+        camera.move(1, 0, 0);
+    }
+
+    if (keyName === 'ArrowRight') {
+        camera.move(-1, 0, 0);
+    }
+
+    if (keyName === 'PageUp') {
+        camera.move(0, 1, 0);
+    }
+
+    if (keyName === 'PageDown') {
+        camera.move(0, -1, 0);
+    }
+
+
+
+    if (keyName === 'w') {
+        camera.rotateOX(-1);
+    }
+
+    if (keyName === 's') {
+        camera.rotateOX(1);
+    }
+
+    if (keyName === 'a') {
+        camera.rotateOY(1);
+    }
+
+    if (keyName === 'd') {
+        camera.rotateOY(-1);
+    }
+
+    if (keyName === 'q') {
+        camera.rotateOZ(-1);
+    }
+
+    if (keyName === 'e') {
+        camera.rotateOZ(1);
     }
     draw();
 });
@@ -54,20 +170,14 @@ function draw() {
             translated = true;
         }
         context.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
-        console.log(distance);
-        /*context.fillStyle = 'rgb(200, 0, 0)';
-        context.fillRect(rects[0].szerokosc, rects[0].szerokosc, rects[0].szerokosc, rects[0].wysokosc);
-        context.fillStyle = 'rgb(0, 0, 200)';
-        context.fillRect(300, 300, rects[1].szerokosc, rects[1].wysokosc);*/
-        polygons.forEach((polygon) => {
+        camera.polygons.forEach((polygon) => {
             let points = [];
-            polygon.points.forEach((element) => {
-                projected_point = point3Dto2D(element);
+            polygon.points.forEach((point) => {
+                projected_point = point3Dto2D(point);
                 if (typeof projected_point != "undefined") {
                     points.push(projected_point);
                 }
             });
-            console.log(points);
             drawPolygon(context, points);
         });
     }
@@ -84,10 +194,11 @@ function drawPolygon(context, points) {
 }
 
 function point3Dto2D(point3D) {
+    z = point3D.z;
     if (point3D.z < 0) {
-        z = 0.000001
+        z = 0.000001;
     }
-    x = point3D.x * (distance / point3D.z)
-    y = point3D.y * (distance / point3D.z)
-    return new Point2D(x, y)
+    x = point3D.x * (camera.distance / z);
+    y = point3D.y * (camera.distance / z);
+    return new Point2D(x, y);
 }
