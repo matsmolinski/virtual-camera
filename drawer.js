@@ -28,8 +28,15 @@ class Polygon {
 
 class Camera {
     constructor() {
-        this.polygons = [new Polygon([new Point3D(10, 10, 10), new Point3D(20, 10, 10), new Point3D(20, 20, 10), new Point3D(10, 20, 10)]),
-            new Polygon([new Point3D(-20, 20, 10), new Point3D(-20, 20, 20), new Point3D(-20, 10, 20), new Point3D(-20, 10, 10)])];
+        this.polygons = [new Polygon([new Point3D(10, 10, 20), new Point3D(20, 10, 20), new Point3D(20, 20, 20), new Point3D(10, 20, 20)]),
+            new Polygon([new Point3D(10, 10, 30), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(10, 20, 30)]),
+            new Polygon([new Point3D(20, 10, 20), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(20, 20, 20)]),
+            new Polygon([new Point3D(10, 10, 20), new Point3D(10, 10, 30), new Point3D(10, 20, 30), new Point3D(10, 20, 20)]),
+
+            new Polygon([new Point3D(-10, 10, 20), new Point3D(-20, 10, 20), new Point3D(-20, 20, 20), new Point3D(-10, 20, 20)]),
+            new Polygon([new Point3D(-10, 10, 30), new Point3D(-20, 10, 30), new Point3D(-20, 20, 30), new Point3D(-10, 20, 30)]),
+            new Polygon([new Point3D(-20, 10, 20), new Point3D(-20, 10, 30), new Point3D(-20, 20, 30), new Point3D(-20, 20, 20)]),
+            new Polygon([new Point3D(-10, 10, 20), new Point3D(-10, 10, 30), new Point3D(-10, 20, 30), new Point3D(-10, 20, 20)])];
         this.distance = 100;
     }
 
@@ -79,13 +86,10 @@ class Camera {
             polygon.points.forEach((point) => {
                 const pointVec = [point.x, point.y, point.z, 1];
                 let newPoint = math.multiply(matrix, pointVec);
-                console.log(newPoint);
                 newPoints.push(new Point3D(newPoint[0], newPoint[1], newPoint[2]));
             });
             newPolygons.push(new Polygon(newPoints));
         });
-        console.log(this.polygons);
-        console.log(newPolygons);
         this.polygons = newPolygons;
     }
 
