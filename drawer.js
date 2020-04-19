@@ -21,23 +21,51 @@ class Line {
 }
 
 class Polygon {
-    constructor(points) {
+    constructor(points, color) {
         this.points = points;
+        this.color = color;
+    }
+
+    weight() {
+        let sum = 0.0;
+        this.points.forEach((point) => {
+            sum += point.z;
+        });
+        return sum / this.points.length;
     }
 }
 
-class Camera {
-    constructor() {
-        this.polygons = [new Polygon([new Point3D(10, 10, 20), new Point3D(20, 10, 20), new Point3D(20, 20, 20), new Point3D(10, 20, 20)]),
+/*new Polygon([new Point3D(10, 10, 20), new Point3D(20, 10, 20), new Point3D(20, 20, 20), new Point3D(10, 20, 20)]),
             new Polygon([new Point3D(10, 10, 30), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(10, 20, 30)]),
             new Polygon([new Point3D(20, 10, 20), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(20, 20, 20)]),
             new Polygon([new Point3D(10, 10, 20), new Point3D(10, 10, 30), new Point3D(10, 20, 30), new Point3D(10, 20, 20)]),
-
             new Polygon([new Point3D(-10, 10, 20), new Point3D(-20, 10, 20), new Point3D(-20, 20, 20), new Point3D(-10, 20, 20)]),
             new Polygon([new Point3D(-10, 10, 30), new Point3D(-20, 10, 30), new Point3D(-20, 20, 30), new Point3D(-10, 20, 30)]),
             new Polygon([new Point3D(-20, 10, 20), new Point3D(-20, 10, 30), new Point3D(-20, 20, 30), new Point3D(-20, 20, 20)]),
-            new Polygon([new Point3D(-10, 10, 20), new Point3D(-10, 10, 30), new Point3D(-10, 20, 30), new Point3D(-10, 20, 20)])];
-        this.distance = 100;
+            new Polygon([new Point3D(-10, 10, 20), new Point3D(-10, 10, 30), new Point3D(-10, 20, 30), new Point3D(-10, 20, 20)])*/
+
+class Camera {
+    constructor() {
+        this.polygons = [new Polygon([new Point3D(10, 10, 20), new Point3D(20, 10, 20), new Point3D(20, 20, 20), new Point3D(10, 20, 20)],'yellow'),
+            new Polygon([new Point3D(10, 10, 30), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(10, 20, 30)],'yellow'),
+            new Polygon([new Point3D(20, 10, 20), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(20, 20, 20)],'yellow'),
+            new Polygon([new Point3D(10, 10, 20), new Point3D(10, 10, 30), new Point3D(10, 20, 30), new Point3D(10, 20, 20)], 'yellow'),
+            new Polygon([new Point3D(10, 10, 20), new Point3D(10, 10, 30), new Point3D(20, 10, 30), new Point3D(20, 10, 20)], 'yellow'),
+            new Polygon([new Point3D(10, 20, 20), new Point3D(10, 20, 30), new Point3D(20, 20, 30), new Point3D(20, 20, 20)], 'yellow')
+        ];
+        this.distance = 100;      
+    }
+
+    sort() {
+        for (let i = 1; i < this.polygons.length; i++) {
+            let tmp = this.polygons[i];
+            let j = i - 1;
+            while (j >= 0 && this.polygons[j].weight() < tmp.weight()) {
+                this.polygons[j + 1] = this.polygons[j];
+                j--;
+            }
+            this.polygons[j + 1] = tmp;
+        }
     }
 
     move(x, y, z) {
@@ -88,15 +116,16 @@ class Camera {
                 let newPoint = math.multiply(matrix, pointVec);
                 newPoints.push(new Point3D(newPoint[0], newPoint[1], newPoint[2]));
             });
-            newPolygons.push(new Polygon(newPoints));
+            newPolygons.push(new Polygon(newPoints,polygon.color));
         });
-        this.polygons = newPolygons;
+        this.polygons = newPolygons;      
     }
 
 }
 
 
 let camera = new Camera();
+camera.sort();
 let translated = false;
 
 document.addEventListener('keydown', (event) => {
@@ -161,6 +190,7 @@ document.addEventListener('keydown', (event) => {
     if (keyName === 'e') {
         camera.rotateOZ(1);
     }
+    camera.sort();
     draw();
 });
 
@@ -182,17 +212,19 @@ function draw() {
                     points.push(projected_point);
                 }
             });
-            drawPolygon(context, points);
+            drawPolygon(context, points, polygon.color);
         });
     }
 }
 
-function drawPolygon(context, points) {
+function drawPolygon(context, points, color) {
     context.beginPath();
     context.moveTo(points[0].x, points[0].y);
     points.forEach((element) => {
         context.lineTo(element.x, element.y);
     })
+    context.fillStyle = color;
+    context.fill()
     context.closePath();
     context.stroke();
 }
