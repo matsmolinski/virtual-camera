@@ -29,7 +29,7 @@ class Polygon {
     weight() {
         let sum = 0.0;
         this.points.forEach((point) => {
-            sum += point.z;
+            sum += Math.sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
         });
         return sum / this.points.length;
     }
