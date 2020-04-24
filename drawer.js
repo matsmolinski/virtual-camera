@@ -24,9 +24,10 @@ class Polygon {
     constructor(points, color) {
         this.points = points;
         this.color = color;
+        this.weight = this.calculateWeight();
     }
 
-    weight() {
+    calculateWeight() {
         let sum = 0.0;
         this.points.forEach((point) => {
             sum += Math.sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
@@ -35,23 +36,27 @@ class Polygon {
     }
 }
 
-/*new Polygon([new Point3D(10, 10, 20), new Point3D(20, 10, 20), new Point3D(20, 20, 20), new Point3D(10, 20, 20)]),
-            new Polygon([new Point3D(10, 10, 30), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(10, 20, 30)]),
-            new Polygon([new Point3D(20, 10, 20), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(20, 20, 20)]),
-            new Polygon([new Point3D(10, 10, 20), new Point3D(10, 10, 30), new Point3D(10, 20, 30), new Point3D(10, 20, 20)]),
-            new Polygon([new Point3D(-10, 10, 20), new Point3D(-20, 10, 20), new Point3D(-20, 20, 20), new Point3D(-10, 20, 20)]),
-            new Polygon([new Point3D(-10, 10, 30), new Point3D(-20, 10, 30), new Point3D(-20, 20, 30), new Point3D(-10, 20, 30)]),
-            new Polygon([new Point3D(-20, 10, 20), new Point3D(-20, 10, 30), new Point3D(-20, 20, 30), new Point3D(-20, 20, 20)]),
-            new Polygon([new Point3D(-10, 10, 20), new Point3D(-10, 10, 30), new Point3D(-10, 20, 30), new Point3D(-10, 20, 20)])*/
+/*this.polygons = [new Polygon([new Point3D(0, 10, 30), new Point3D(0, 20, 30), new Point3D(10, 20, 30), new Point3D(10, 10, 30)], 'red'),
+            new Polygon([new Point3D(10, 0, 20), new Point3D(20, 0, 20), new Point3D(25, 10, 20), new Point3D(25, 25, 20), , new Point3D(10, 10, 20)], 'green'),
+            new Polygon([new Point3D(10, 0, 10), new Point3D(20, 10, 10), new Point3D(10, 10, 10)], 'blue')
+
+        ];
+        */
 
 class Camera {
     constructor() {
-        this.polygons = [new Polygon([new Point3D(10, 10, 20), new Point3D(20, 10, 20), new Point3D(20, 20, 20), new Point3D(10, 20, 20)],'yellow'),
-            new Polygon([new Point3D(10, 10, 30), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(10, 20, 30)],'yellow'),
-            new Polygon([new Point3D(20, 10, 20), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(20, 20, 20)],'yellow'),
-            new Polygon([new Point3D(10, 10, 20), new Point3D(10, 10, 30), new Point3D(10, 20, 30), new Point3D(10, 20, 20)], 'yellow'),
-            new Polygon([new Point3D(10, 10, 20), new Point3D(10, 10, 30), new Point3D(20, 10, 30), new Point3D(20, 10, 20)], 'yellow'),
-            new Polygon([new Point3D(10, 20, 20), new Point3D(10, 20, 30), new Point3D(20, 20, 30), new Point3D(20, 20, 20)], 'yellow')
+        this.polygons = [new Polygon([new Point3D(10, 10, 20), new Point3D(20, 10, 20), new Point3D(20, 20, 20), new Point3D(10, 20, 20)], 'yellow'),
+        new Polygon([new Point3D(10, 10, 30), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(10, 20, 30)], 'yellow'),
+        new Polygon([new Point3D(20, 10, 20), new Point3D(20, 10, 30), new Point3D(20, 20, 30), new Point3D(20, 20, 20)], 'yellow'),
+        new Polygon([new Point3D(10, 10, 20), new Point3D(10, 10, 30), new Point3D(10, 20, 30), new Point3D(10, 20, 20)], 'yellow'),
+        new Polygon([new Point3D(10, 10, 20), new Point3D(10, 10, 30), new Point3D(20, 10, 30), new Point3D(20, 10, 20)], 'yellow'),
+        new Polygon([new Point3D(10, 20, 20), new Point3D(10, 20, 30), new Point3D(20, 20, 30), new Point3D(20, 20, 20)], 'yellow'),
+        new Polygon([new Point3D(-10, 10, 20), new Point3D(-20, 10, 20), new Point3D(-20, 20, 20), new Point3D(-10, 20, 20)], 'cyan'),
+        new Polygon([new Point3D(-10, 10, 30), new Point3D(-20, 10, 30), new Point3D(-20, 20, 30), new Point3D(-10, 20, 30)], 'cyan'),
+        new Polygon([new Point3D(-20, 10, 20), new Point3D(-20, 10, 30), new Point3D(-20, 20, 30), new Point3D(-20, 20, 20)], 'cyan'),
+        new Polygon([new Point3D(-10, 10, 20), new Point3D(-10, 10, 30), new Point3D(-10, 20, 30), new Point3D(-10, 20, 20)], 'cyan'),
+        new Polygon([new Point3D(-10, 10, 20), new Point3D(-10, 10, 30), new Point3D(-20, 10, 30), new Point3D(-20, 10, 20)], 'cyan'),
+        new Polygon([new Point3D(-10, 20, 20), new Point3D(-10, 20, 30), new Point3D(-20, 20, 30), new Point3D(-20, 20, 20)], 'cyan')
         ];
         this.distance = 100;      
     }
@@ -60,7 +65,7 @@ class Camera {
         for (let i = 1; i < this.polygons.length; i++) {
             let tmp = this.polygons[i];
             let j = i - 1;
-            while (j >= 0 && this.polygons[j].weight() < tmp.weight()) {
+            while (j >= 0 && this.polygons[j].weight < tmp.weight) {
                 this.polygons[j + 1] = this.polygons[j];
                 j--;
             }
@@ -207,9 +212,9 @@ function draw() {
         camera.polygons.forEach((polygon) => {
             let points = [];
             polygon.points.forEach((point) => {
-                projected_point = point3Dto2D(point);
-                if (typeof projected_point != "undefined") {
-                    points.push(projected_point);
+                projectedPoint = point3Dto2D(point);
+                if (typeof projectedPoint != "undefined") {
+                    points.push(projectedPoint);
                 }
             });
             drawPolygon(context, points, polygon.color);
@@ -224,7 +229,7 @@ function drawPolygon(context, points, color) {
         context.lineTo(element.x, element.y);
     })
     context.fillStyle = color;
-    context.fill()
+    context.fill();
     context.closePath();
     context.stroke();
 }
